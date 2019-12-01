@@ -2,8 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using System.IO;
 
@@ -74,12 +72,12 @@ namespace SecondTask.TextObjects
                 Count();
         }
 
-        public List<string> StringsInText => ToString().Split(new string[] { "\n" }, StringSplitOptions.None).ToList();
+        public List<string> RowsInText => ToString().Split(new string[] { "\n" }, StringSplitOptions.None).ToList();
 
-        public List<int> NumberStringsOfWord(Word word)
+        public List<int> NumberStringsWhereWordConsists(Word word)
         {
-            return StringsInText.Where(str => Regex.IsMatch(str, @"\b" + word + @"\b", RegexOptions.IgnoreCase)).
-                  Select(str => StringsInText.IndexOf(str)).ToList();
+            return RowsInText.Where(str => Regex.IsMatch(str, @"\b" + word + @"\b", RegexOptions.IgnoreCase)).
+                  Select(str => RowsInText.IndexOf(str)).ToList();
         }
 
 
@@ -88,7 +86,7 @@ namespace SecondTask.TextObjects
             var groups = Sentences.SelectMany(sent => sent.DistinctWords).
                 Distinct().Select(word => new Word(word.ToString().ToLower())).
                 OrderBy(word => word).
-                ToDictionary(word => word, NumberStringsOfWord).
+                ToDictionary(word => word, NumberStringsWhereWordConsists).
                 GroupBy(keyValue => keyValue.Key.ToString().First());
 
             using (StreamWriter writer = new StreamWriter(pathToFile))
