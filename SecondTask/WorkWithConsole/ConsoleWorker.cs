@@ -78,7 +78,7 @@ namespace SecondTask.WorkWithConsole
                                         Console.WriteLine("The length must be bigger than 0");
                                     else
                                     {
-                                        text.ReplaceWordInSentence(indexSentence, wordLength, TextParser.ParseText(inserting).ToArray());
+                                        text.ReplaceWordInSentenceByElements(indexSentence, wordLength, TextParser.ParseText(inserting).ToArray());
                                         Console.WriteLine(text);
                                     }
                                 }

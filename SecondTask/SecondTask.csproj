@@ -48,6 +48,7 @@
     <Compile Include="Parser\TextParser.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TextObjects\Row.cs" />
     <Compile Include="TextObjects\Sentence.cs" />
     <Compile Include="TextObjects\SentenceItem.cs" />
     <Compile Include="TextObjects\SentenceSeparator.cs" />

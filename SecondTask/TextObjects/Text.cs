@@ -2,14 +2,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.IO;
+using System.Text;
 
 namespace SecondTask.TextObjects
 {
     public class Text : IEnumerable<Sentence>
     {
         public List<Sentence> Sentences { get; private set; }
+
+        public List<SentenceItem> SentenceItems => Sentences.SelectMany(sent => sent.Items).ToList();
 
         public Sentence this[int index] => Sentences[index];
 
@@ -43,7 +45,7 @@ namespace SecondTask.TextObjects
         }
 
         // Task 4.
-        public void ReplaceWordInSentence(int indexSentence, int lengthWord, params SentenceItem[] elementsToInsert)
+        public void ReplaceWordInSentenceByElements(int indexSentence, int lengthWord, params SentenceItem[] elementsToInsert)
         {
             Sentences[indexSentence].ReplaceWordOfLengthBy(lengthWord, elementsToInsert);
         }
@@ -66,43 +68,80 @@ namespace SecondTask.TextObjects
         // Concordance.
         public int GetFrequencyWord(Word wordToCheck)
         {
-            return Sentences.
-                SelectMany(sent => sent.Items.OfType<Word>()).
-                Where(word => word.Equals(wordToCheck)).
-                Count();
+            return SentenceItems.OfType<Word>().Where(word => word.Equals(wordToCheck)).Count();
         }
 
-        public List<string> RowsInText => ToString().Split(new string[] { "\n" }, StringSplitOptions.None).ToList();
+        public List<Row> GetRows()
+        {
+            var rows = new List<Row>();
+            int stringNumber = 0;
+            var rowItems = new List<SentenceItem>();
+            foreach (var item in SentenceItems)
+            {
+                if (!(item.ToString().Equals("\n")))
+                {
+                    rowItems.Add(item);
+                }
+                else
+                {
+                    rows.Add(new Row(stringNumber, rowItems));
+                    stringNumber++;
+                    rowItems.Clear();
+                }
+            }
+            return rows;
+        }
+     
 
         public List<int> NumberStringsWhereWordConsists(Word word)
         {
-            return RowsInText.Where(str => Regex.IsMatch(str, @"\b" + word + @"\b", RegexOptions.IgnoreCase)).
-                  Select(str => RowsInText.IndexOf(str)).ToList();
+            return GetRows().Where( row=> row.Items.Contains(word)).Select(row=>row.Number).ToList();
         }
-
 
         public void WriteConcordanceToFile(string pathToFile)
         {
-            var groups = Sentences.SelectMany(sent => sent.DistinctWords).
+            var dictionoryGroups = SentenceItems.OfType<Word>().
                 Distinct().Select(word => new Word(word.ToString().ToLower())).
                 OrderBy(word => word).
                 ToDictionary(word => word, NumberStringsWhereWordConsists).
                 GroupBy(keyValue => keyValue.Key.ToString().First());
 
-            using (StreamWriter writer = new StreamWriter(pathToFile))
+            var result = new StringBuilder();
+            foreach (var group in dictionoryGroups)
             {
-                foreach (var group in groups)
+                result.Append(Char.ToUpper(group.Key)+Environment.NewLine);
+                foreach (var item in group)
                 {
-                    writer.WriteLine(Char.ToUpper(group.Key));
-                    foreach (var item in group)
-                    {
-                        writer.Write(item.Key + ".............." + GetFrequencyWord(item.Key) + ": ");
-                        item.Value.ForEach(index => writer.Write($"{index} "));
-                        writer.WriteLine();
-                    }
+                    result.Append(item.Key + ".............." + GetFrequencyWord(item.Key) + ": ");
+                    item.Value.ForEach(index => result.Append(index + " "));
+                    result.Append(Environment.NewLine);
                 }
             }
+            File.WriteAllText(pathToFile, result.ToString());
         }
     }
 }
 
+
+// public List<string> RowsInText => ToString().Split(new string[] { "\n" }, StringSplitOptions.None).ToList();
+
+/*  public List<int> NumberStringsWhereWordConsists(Word word)
+  {
+      return RowsInText.Where(str => Regex.IsMatch(str, @"\b" + word + @"\b", RegexOptions.IgnoreCase)).
+            Select(str => RowsInText.IndexOf(str)).ToList();
+  }*/
+
+/*using (StreamWriter writer = new StreamWriter(pathToFile))
+        {
+            foreach (var group in dictionoryGroups)
+            {
+                writer.WriteLine(Char.ToUpper(group.Key));
+                foreach (var item in group)
+                {
+                    writer.Write(item.Key + ".............." + GetFrequencyWord(item.Key) + ": ");
+                    item.Value.ForEach(index => writer.Write($"{index} "));
+                    writer.WriteLine();
+                }
+            }
+        }
+        */
