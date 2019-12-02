@@ -1,10 +1,8 @@
-﻿using SecondTask.Parser;
+﻿using SecondTask.Parsers;
+using SecondTask.Tasks;
 using SecondTask.TextObjects;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SecondTask.WorkWithConsole
 {
@@ -18,7 +16,8 @@ namespace SecondTask.WorkWithConsole
              4.In some sentence of the text of the word of the given length to replace the specified substring
              5.Print text
              Press another key to finish work";
-        public static void Start(Text text)
+
+        public static void Start(ITaskFirst taskFirst, ITextParser textParser)
         {
             do
             {
@@ -27,7 +26,7 @@ namespace SecondTask.WorkWithConsole
                 switch (Console.ReadLine())
                 {
                     case "1":
-                        text.SentencesInAscendingOrder.ToList().ForEach(sent => Console.Write(sent));
+                        taskFirst.SentencesInAscendingOrder.ToList().ForEach(sent => Console.Write(sent));
                         Console.WriteLine("Press any key to continue");
                         Console.ReadKey();
                         break;
@@ -40,7 +39,7 @@ namespace SecondTask.WorkWithConsole
                             else
                             {
                                 Console.WriteLine("Words:");
-                                text.GetWordsFromIssueSents(length).ToList().ForEach(word => Console.WriteLine(word));
+                               taskFirst.GetWordsFromIssueSentencesByGivenLength(length).ToList().ForEach(word => Console.WriteLine(word));
                             }
                         }
                         else
@@ -56,8 +55,8 @@ namespace SecondTask.WorkWithConsole
                                 Console.WriteLine("The length must be bigger than 0");
                             else
                             {
-                                text.SentencesWithoutWordsStartConsonants(lengthWord);
-                                Console.WriteLine(text);
+                                taskFirst.SentencesWithoutWordsStartWithConsonant(lengthWord);
+                                Console.WriteLine(taskFirst.Text);
                             }
                         }
                         else Console.WriteLine("Incorrect input");
@@ -69,7 +68,7 @@ namespace SecondTask.WorkWithConsole
                         Console.WriteLine("Input the index of sentence (start with 0)");
                         if (int.TryParse(Console.ReadLine(), out int indexSentence))
                         {
-                            if (indexSentence >= 0 && indexSentence < text.SentencesAmount)
+                            if (indexSentence >= 0 && indexSentence < taskFirst.Text.AmountOfSentences)
                             {
                                 Console.WriteLine("Input the length of the word");
                                 if (int.TryParse(Console.ReadLine(), out int wordLength))
@@ -78,8 +77,8 @@ namespace SecondTask.WorkWithConsole
                                         Console.WriteLine("The length must be bigger than 0");
                                     else
                                     {
-                                        text.ReplaceWordInSentenceByElements(indexSentence, wordLength, TextParser.ParseText(inserting).ToArray());
-                                        Console.WriteLine(text);
+                                        taskFirst.ReplaceWordOfGivenLengthInSentenceByElements(indexSentence, wordLength, textParser.ParseText(inserting).ToArray());
+                                        Console.WriteLine(taskFirst.Text);
                                     }
                                 }
                                 else
@@ -94,7 +93,7 @@ namespace SecondTask.WorkWithConsole
                         Console.ReadKey();
                         break;
                     case "5":
-                        Console.WriteLine(text);
+                        Console.WriteLine(taskFirst.Text);
                         Console.WriteLine("Press any key to continue");
                         Console.ReadKey();
                         break;

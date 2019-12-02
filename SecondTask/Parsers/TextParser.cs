@@ -6,36 +6,37 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace SecondTask.Parser
+namespace SecondTask.Parsers
 {
-    public static class TextParser
+    public class TextParser:ITextParser
     {
-        private static readonly Regex regSentence = new Regex(@"[A-Z0-9][^!\.\?]*(!|\.|\?)+(\s+)*", RegexOptions.Compiled);
+        private static readonly Regex regSentence = new Regex(@"[A-Z0-9][^!\.\?]*(!|\.|\?)+(\s)*", RegexOptions.Compiled);
 
-        public static Text ParseTextFile(string pathToText)
+        public Text ParseTextFile(string pathToText)
         {
-            /* string sourceText;
-             using (StreamReader reader = new StreamReader(pathToText, System.Text.Encoding.Default))
-             {
-                 sourceText = reader.ReadToEnd();
-             }*/
-            string sourceText = File.ReadAllText(pathToText);
+            string sourceText;
+            try
+            {
+                sourceText = File.ReadAllText(pathToText);
+            }
+            catch
+            {
+                return null;
+            }
             string text = Regex.Replace(sourceText, @"(\t+)|([ ]+)", " ");
-            text=Regex.Replace(text, @"(\t+)|([ ]+)", " ");
-            MatchCollection matches = regSentence.Matches(text.ToString());
+            text = Regex.Replace(text, @"(\t+)|([ ]+)", " ");
 
+            MatchCollection matches = regSentence.Matches(text);
             var sentences = new List<Sentence>();
             foreach (Match match in matches)
             {
-                sentences.Add(new Sentence (ParseText(match.Value)));
+                sentences.Add(new Sentence(ParseText(match.Value)));
             }
 
             return new Text(sentences);
         }
 
-        
-
-        public static List<SentenceItem> ParseText(string text)
+        public  List<SentenceItem> ParseText(string text)
         {
             var items = new List<SentenceItem>();
             var buf = new StringBuilder();
@@ -95,7 +96,11 @@ namespace SecondTask.Parser
 
             return items;
         }
-
-        
     }
 }
+
+/* string sourceText;
+            using (StreamReader reader = new StreamReader(pathToText, System.Text.Encoding.Default))
+            {
+                sourceText = reader.ReadToEnd();
+            }*/

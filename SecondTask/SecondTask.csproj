@@ -44,10 +44,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Parsers\ITextParser.cs" />
+    <Compile Include="Tasks\Models\Concordance.cs" />
     <Compile Include="Helpers\HelpersForTextElements.cs" />
-    <Compile Include="Parser\TextParser.cs" />
+    <Compile Include="Parsers\TextParser.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tasks\IConcordance.cs" />
+    <Compile Include="Tasks\ITaskFirst.cs" />
+    <Compile Include="Tasks\Models\TaskFirst.cs" />
     <Compile Include="TextObjects\Row.cs" />
     <Compile Include="TextObjects\Sentence.cs" />
     <Compile Include="TextObjects\SentenceItem.cs" />

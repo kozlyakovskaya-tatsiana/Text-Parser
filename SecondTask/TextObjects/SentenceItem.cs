@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SecondTask.TextObjects
 {
@@ -17,17 +13,19 @@ namespace SecondTask.TextObjects
             Value = value;
         }
 
+        public string ValueToLower => Value.ToLower();
+
         public override sealed string ToString() => Value;
 
         public override int GetHashCode()
         {
-            return Value.ToLower().GetHashCode();
+            return ValueToLower.GetHashCode();
         }
 
         public override bool Equals(object other)
         {
-            return other is SentenceItem && Value.Equals(((SentenceItem)other).Value,StringComparison.OrdinalIgnoreCase);
+            return other is SentenceItem && Value.Equals(((SentenceItem)other).Value, StringComparison.OrdinalIgnoreCase);
         }
-       
+
     }
 }

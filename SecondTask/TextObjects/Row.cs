@@ -5,9 +5,9 @@ namespace SecondTask.TextObjects
 {
     public class Row
     {
-        public int Number { get; private set; }
+        public int Number { get; }
 
-        public List<SentenceItem> Items { get; private set; }
+        public List<SentenceItem> Items { get; }
 
         public Row(int number, IEnumerable<SentenceItem> items)
         {

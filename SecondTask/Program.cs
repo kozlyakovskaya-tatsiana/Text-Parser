@@ -1,8 +1,9 @@
 ﻿using System.Configuration;
-using SecondTask.Parser;
+using SecondTask.Parsers;
 using SecondTask.TextObjects;
 using SecondTask.WorkWithConsole;
 using System;
+using SecondTask.Tasks.Models;
 
 namespace SecondTask
 {
@@ -12,10 +13,12 @@ namespace SecondTask
         {
             try
             {
-                Text text = TextParser.ParseTextFile(ConfigurationManager.AppSettings["pathToSourceText"]);
-                text.GetRows().ForEach(row => Console.WriteLine(row));
-                ConsoleWorker.Start(text);
-                text.WriteConcordanceToFile(ConfigurationManager.AppSettings["pathToConcordance"]);
+                var textParser = new TextParser();
+                var text = textParser.ParseTextFile(ConfigurationManager.AppSettings["pathToSourceText"]);
+                var taskFirst = new TaskFirst(text);
+                
+                ConsoleWorker.Start(taskFirst, textParser);
+                new Concordance(text).WriteConcordanceToFile(ConfigurationManager.AppSettings["pathToConcordance"]);
             }
             catch (Exception ex)
             {
@@ -26,6 +29,8 @@ namespace SecondTask
                 Console.WriteLine("Program has finished");
                 Console.ReadKey();
             }
+
+
         }
     }
 }

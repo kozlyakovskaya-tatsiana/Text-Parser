@@ -1,9 +1,5 @@
 ﻿using SecondTask.Helpers;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SecondTask.TextObjects
 {
@@ -15,7 +11,7 @@ namespace SecondTask.TextObjects
 
         public bool IsPunctuation => Value.Any(HelpersForTextElements.Punctuations.Contains);
 
-        public SentenceSeparator(string value):base(value)
+        public SentenceSeparator(string value) : base(value)
         {
 
         }
